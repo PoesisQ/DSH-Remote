@@ -1,0 +1,15 @@
+[Unit]
+Description=DSH 手机远程互联桥接（dsh-remote）
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Copy this template outside the repository and replace both absolute paths.
+WorkingDirectory=/absolute/path/to/dsh-remote
+ExecStart=/absolute/path/to/node /absolute/path/to/dsh-remote/bin/dsh-remote.js --config /absolute/path/to/dsh-remote/config.json
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

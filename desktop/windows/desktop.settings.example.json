@@ -1,0 +1,8 @@
+{
+  "Distro": "Ubuntu",
+  "BackendRoot": "/opt/dsh-suite",
+  "ProfilePath": "",
+  "DshUrl": "http://127.0.0.1:3080/",
+  "RelayUrl": "",
+  "StopOnClose": true
+}

@@ -1,0 +1,19 @@
+{
+  "name": "dsh-suite",
+  "version": "0.8.0",
+  "description": "DSH companion suite: desktop, private remote control, usage and optional browser workspace",
+  "type": "module",
+  "private": true,
+  "bin": { "dsh-remote": "bin/dsh-remote.js", "dsh-suite": "bin/dsh-suite.js" },
+  "engines": { "node": ">=24.5" },
+  "scripts": {
+    "start": "node bin/dsh-remote.js",
+    "suite": "node bin/dsh-suite.js",
+    "audit:public": "node scripts/audit-public.mjs",
+    "export:public": "node scripts/export-public.mjs",
+    "sim": "node test/phone-sim.js",
+    "build:pwa": "node scripts/build-pwa.mjs",
+    "test": "node --test test/*.test.js",
+    "check": "node scripts/check.mjs && npm test"
+  }
+}

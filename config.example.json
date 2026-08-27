@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dshUrl": "http://127.0.0.1:3080",
+  "usage": { "script": null },
+  "relay": {
+    "url": "https://your-relay.example.invalid",
+    "channel": "generated-by-dsh-remote-init",
+    "authToken": "generated-by-dsh-remote-init",
+    "key": "generated-by-dsh-remote-init",
+    "idlePollMs": 15000,
+    "activePollMs": 1500
+  },
+  "push": {
+    "otherSessions": false
+  }
+}
