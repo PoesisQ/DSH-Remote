@@ -7,7 +7,8 @@
     <a href="#快速开始">快速开始</a> ·
     <a href="#安装各端">安装各端</a> ·
     <a href="docs/deployment-vercel.md">部署文档</a> ·
-    <a href="docs/security.md">安全边界</a>
+    <a href="docs/security.md">安全边界</a> ·
+    <a href="docs/CHANGELOG.md">更新说明</a>
   </p>
   <p><code>0.8.0 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
 </div>
@@ -37,10 +38,10 @@
 | 远程对话 | 会话搜索、切换、新建，历史摘要、队列、模型和状态查看 |
 | 任务控制 | 普通消息、steer 干预、停止回合，审批及提问的远程处理 |
 | 消息同步 | 加密信箱、分页游标、断网重试、持久化发送队列、有限去重 |
-| 移动界面 | 自定义会话面板、长标题省略、安全 Markdown、代码复制、轻量动画 |
+| 移动界面 | 自定义会话面板、长标题省略、安全 Markdown、代码复制、轻量动画、统一波浪图标 |
 | 连接状态 | 分别检查云端可达、电脑响应和 DSH 就绪 |
-| 用量面板 | 余额、北京时间峰谷时段、Tokens、估算费用与采样时间 |
-| Windows 桌面 | WebView2 主窗口、启动动画、统一后台启停、配对入口、用量浮层 |
+| 用量面板 | 余额、官方峰谷时段（工作日 9:00–12:00 / 14:00–18:00 高峰，其余空闲）、Tokens、估算费用与采样时间 |
+| Windows 桌面 | WebView2 主窗口、无缝启动过渡、统一后台启停、配对入口、用量浮层 |
 | NovaTab（可选） | 壁纸、搜索、书签、快捷链接、待办及本机保存的 DSH 入口 |
 
 用量默认统计**电脑最近活跃会话**，不一定是手机当前选择的会话。费用是估算，以实际账单为准。NovaTab 不会自动把书签、历史或待办上传到中继。
@@ -280,7 +281,7 @@ npm run export:public  # 导出候选源码，不含 Git 历史或私有配置
 node scripts/verify-release.mjs
 ```
 
-Windows 构建额外运行来源/配置/参数测试，以及启动页布局、计时和动画状态测试。GitHub Actions 检查核心测试与 NovaTab 构建；不会启动你的 DSH 或自动部署生产中继。
+Windows 构建额外运行来源/配置/参数测试，以及主窗口启动覆盖层（`MainOverlayTests`）的布局、计时和动画状态测试。GitHub Actions 检查核心测试与 NovaTab 构建；不会启动你的 DSH 或自动部署生产中继。
 
 ### 当前验证状态
 
@@ -306,7 +307,7 @@ DSH-Remote/
 ├── modules/novatab/     # 可选浏览器工作台
 ├── test/                # 回归与隔离测试夹具
 ├── scripts/             # 构建、检查、导出与诊断
-└── docs/                # 部署、迁移、安全及交接
+└── docs/                # 部署、迁移、安全、更新说明及交接
 ```
 
 ### 深入阅读
@@ -317,6 +318,7 @@ DSH-Remote/
 | 部署或维护云端中继 | [Vercel 部署](docs/deployment-vercel.md) |
 | 接入余额与峰谷统计 | [用量适配](docs/desktop-usage.md) |
 | 让其他应用复用技术路线 | [多应用设计](docs/multi-app.md) |
+| 查看历次变更 | [更新说明](docs/CHANGELOG.md) |
 | 继续开发这个项目 | [技术交接](docs/SUITE_HANDOVER.md) · [模块清单](suite.manifest.json) |
 
 ## 许可与致谢
