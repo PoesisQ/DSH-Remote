@@ -34,7 +34,7 @@
 ### 文档与发布
 
 - 新增本文件（`docs/CHANGELOG.md`）。
-- 公开审计通过（141 文件 0 发现）后重新导出源码包，并在发布仓库新增 `codex/wave-icons` 分支待推送合并。
+- 公开审计通过后重新导出源码包；`codex/wave-icons` 已推送，并在确认远端基线与 fast-forward 关系后更新到 GitHub `main`，`Check suite` 持续集成通过。
 - Vercel `vercel/` 静态目录已同步本轮全部前端改动；生产部署由部署者自行执行。
 
 ---
