@@ -10,7 +10,7 @@
     <a href="docs/security.md">安全边界</a> ·
     <a href="docs/CHANGELOG.md">更新说明</a>
   </p>
-  <p><code>0.8.1 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
+  <p><code>0.8.2 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
 </div>
 
 ---
@@ -200,7 +200,7 @@ BackendRoot 必须是自己的 Linux 源码目录。首次运行前先完成 Lin
 bash scripts/build-apk.sh
 ```
 
-产物：`dist/DSH-Remote-v0.8.1.apk`。工具链路径通过标准环境变量或私有 `.runtime.env` 配置；依赖已全部缓存时可启用 `DSH_REMOTE_GRADLE_OFFLINE=1`。
+产物：`dist/DSH-Remote-v0.8.2.apk`。工具链路径通过标准环境变量或私有 `.runtime.env` 配置；依赖已全部缓存时可启用 `DSH_REMOTE_GRADLE_OFFLINE=1`。
 
 当前脚本生成 **debug 签名测试包**。同签名可覆盖升级；不同签名不能直接覆盖，不要为了安装而先删除旧 App 数据。APK 内置页面需要安装新版才能更新，不能只刷新网站。
 

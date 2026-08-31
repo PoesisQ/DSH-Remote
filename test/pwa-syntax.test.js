@@ -23,18 +23,27 @@ test("PWA inline application script parses and contains no MQTT runtime", () => 
   assert.match(html, /x\.wire\.startsWith\(`v2\.\$\{x\.id\}\.\`\)/);
 
   const serviceWorker = readFileSync(new URL("../phone/sw.js", import.meta.url), "utf8");
-  assert.match(serviceWorker, /dsh-remote-shell-v10/);
+  assert.match(serviceWorker, /dsh-remote-shell-v11/);
   assert.match(serviceWorker, /usage\.js/);
   assert.match(serviceWorker, /viewport\.js/);
   assert.match(serviceWorker, /url\.origin !== self\.location\.origin/);
 });
 
 test("PWA build inputs keep browser and Android keyboard handling aligned", () => {
+  const html = readFileSync(new URL("../phone/index.template.html", import.meta.url), "utf8");
   const viewport = readFileSync(new URL("../phone/viewport.js", import.meta.url), "utf8");
   assert.equal(readFileSync(new URL("../vercel/viewport.js", import.meta.url), "utf8"), viewport);
   const manifest = readFileSync(new URL("../android/app/src/main/AndroidManifest.xml", import.meta.url), "utf8");
   const activity = readFileSync(new URL("../android/app/src/main/java/com/poesis/dshremote/MainActivity.java", import.meta.url), "utf8");
   assert.match(manifest, /android:windowSoftInputMode="adjustResize"/);
   assert.match(activity, /SOFT_INPUT_ADJUST_RESIZE/);
+  assert.match(activity, /OnGlobalLayoutListener/);
+  assert.match(activity, /getWindowVisibleDisplayFrame/);
+  assert.match(activity, /WindowInsets\.Type\.ime/);
+  assert.match(activity, /visible\.isEmpty\(\)/);
+  assert.match(activity, /minimumWebHeight/);
+  assert.match(activity, /params\.bottomMargin = desiredMargin/);
+  assert.match(activity, /return insets/);
+  assert.match(html, /__dshViewportController/);
   assert.match(readFileSync(new URL("../scripts/build-pwa.mjs", import.meta.url), "utf8"), /"viewport\.js"/);
 });

@@ -102,5 +102,5 @@ test("service worker upgrade leaves unrelated same-origin caches untouched", asy
   });
   vm.runInContext(readFileSync(new URL("../phone/sw.js", import.meta.url), "utf8"), context);
   let completed; handlers.activate({ waitUntil: promise => completed = promise }); await completed;
-  assert.deepEqual(deleted, ["dsh-remote-shell-v8", "dsh-remote-shell-v9"]);
+  assert.deepEqual(deleted, ["dsh-remote-shell-v8", "dsh-remote-shell-v9", "dsh-remote-shell-v10"]);
 });

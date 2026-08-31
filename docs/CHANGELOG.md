@@ -4,6 +4,21 @@
 
 ---
 
+## 0.8.2 · Android 键盘原生兜底（2026-08-31）
+
+### Android App
+
+- 修复部分 Android App 中输入栏仍被软键盘覆盖的问题。官方 WebView 直到 M139 才会把 IME 遮挡自动反映到网页 visual viewport；旧版与部分厂商 WebView 现在由原生 Activity 测量窗口真实可见区域，并仅在 WebView 确实与键盘重叠时缩短其底部边界。
+- 原生兜底与 `adjustResize`、网页 `VisualViewport` 协同工作：Android 11+ 同时读取真实 IME 可见状态，系统已经缩放窗口时 margin 自动归零；现代 WebView 仍接收未经消费的 WindowInsets，不会留下键盘关闭后的幽灵空白。空可见矩形、异常超大遮挡和冷启动未测量状态都有边界保护，WebView 始终保留最小可用高度。
+- 键盘边界变化后主动通知网页视口控制器并把当前编辑元素滚回可视区域；销毁 Activity 时移除布局监听，避免监听器持有旧页面。
+- Android `versionCode` 升至 11，版本更新为 `0.8.2`，保持原应用 ID 与签名，可覆盖安装 0.8.0/0.8.1。
+
+### 稳健性与发布
+
+- Service Worker shell cache 升至 `v11`；自动化检查增加 Android 原生可见区域、非消费 Insets、底部边界调整及网页控制器联动断言。
+
+---
+
 ## 0.8.1 · 手机软键盘适配与稳健性更新（2026-08-31）
 
 ### 手机网页 / PWA / Android

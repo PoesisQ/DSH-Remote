@@ -1,6 +1,6 @@
 {
   "name": "dsh-suite",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "DSH companion suite: desktop, private remote control, usage and optional browser workspace",
   "type": "module",
   "private": true,

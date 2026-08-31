@@ -1,4 +1,4 @@
-const CACHE = "dsh-remote-shell-v10";
+const CACHE = "dsh-remote-shell-v11";
 const SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/markdown.js", "/connection.js", "/usage.js", "/viewport.js"];
 
 self.addEventListener("install", (event) => {
