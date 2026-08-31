@@ -98,9 +98,9 @@ test("service worker upgrade leaves unrelated same-origin caches untouched", asy
   const handlers = {}, deleted = [];
   const context = vm.createContext({
     self: { addEventListener: (name, fn) => handlers[name] = fn, clients: { claim() {} } },
-    caches: { keys: async () => ["notes-shell-v1", "dsh-remote-shell-v8", "dsh-remote-shell-v9"], delete: async key => deleted.push(key) },
+    caches: { keys: async () => ["notes-shell-v1", "dsh-remote-shell-v8", "dsh-remote-shell-v9", "dsh-remote-shell-v10"], delete: async key => deleted.push(key) },
   });
   vm.runInContext(readFileSync(new URL("../phone/sw.js", import.meta.url), "utf8"), context);
   let completed; handlers.activate({ waitUntil: promise => completed = promise }); await completed;
-  assert.deepEqual(deleted, ["dsh-remote-shell-v8"]);
+  assert.deepEqual(deleted, ["dsh-remote-shell-v8", "dsh-remote-shell-v9"]);
 });

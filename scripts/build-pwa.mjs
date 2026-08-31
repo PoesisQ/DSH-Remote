@@ -15,7 +15,7 @@ for (const target of targets) {
   mkdirSync(dirname(target), { recursive: true });
   writeFileSync(target, tpl);
 }
-for (const asset of ["manifest.webmanifest", "sw.js", "icon.svg", "markdown.js", "connection.js", "usage.js"]) {
+for (const asset of ["manifest.webmanifest", "sw.js", "icon.svg", "markdown.js", "connection.js", "usage.js", "viewport.js"]) {
   copyFileSync(join(root, "phone", asset), join(root, "vercel", asset));
   copyFileSync(join(root, "phone", asset), join(root, "android", "app", "src", "main", "assets", asset));
 }

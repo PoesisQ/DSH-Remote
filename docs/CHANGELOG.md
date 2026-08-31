@@ -1,6 +1,24 @@
 # 更新说明（Changelog）
 
-按时间倒序记录 DSH Remote / DSH Suite 的变更。版本号仍在 `0.8.0` 上迭代，尚未发布新的正式版本号。
+按时间倒序记录 DSH Remote / DSH Suite 的变更。
+
+---
+
+## 0.8.1 · 手机软键盘适配与稳健性更新（2026-08-31）
+
+### 手机网页 / PWA / Android
+
+- 修复点击对话输入框后，输入栏被手机软键盘覆盖的问题：页面现在使用 `VisualViewport` 的真实高度与顶部偏移，把完整 App 固定在当前可视区域内，输入栏会停在键盘上沿。
+- 增加 `interactive-widget=resizes-content` 浏览器提示；不支持 `VisualViewport` 的设备仍会回退到 `innerHeight` 与系统窗口缩放。
+- Android Activity 同时在 Manifest 与运行时启用 `adjustResize`，避免不同厂商 WebView 忽略单一路径配置。
+- 输入法开合期间做多阶段收敛更新，覆盖动画键盘、横竖屏切换、地址栏变化、页面恢复和 iOS 视口顶部偏移；配对页、会话搜索及问题输入也共享同一可视区域处理。
+- 主消息区增加明确的 flex 收缩与滚动边界；键盘打开时移除多余底部安全区空隙，长文本框高度受当前可视区域约束。
+
+### 稳健性与发布
+
+- 新增独立 `viewport.js`，将视口计算与事件控制器拆开测试；新增覆盖 overlay keyboard、浏览器栏小幅变化、键盘关闭、旋转、非法指标与 Android 双重配置的测试。
+- Service Worker shell cache 升至 `v10` 并预缓存 `viewport.js`，升级时只清理本项目旧缓存，不影响同源其他应用。
+- Android `versionCode` 升至 10，套件版本更新为 `0.8.1`，便于同签名覆盖安装与问题定位。
 
 ---
 

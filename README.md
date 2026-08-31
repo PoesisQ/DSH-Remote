@@ -10,7 +10,7 @@
     <a href="docs/security.md">安全边界</a> ·
     <a href="docs/CHANGELOG.md">更新说明</a>
   </p>
-  <p><code>0.8.0 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
+  <p><code>0.8.1 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
 </div>
 
 ---
@@ -38,7 +38,7 @@
 | 远程对话 | 会话搜索、切换、新建，历史摘要、队列、模型和状态查看 |
 | 任务控制 | 普通消息、steer 干预、停止回合，审批及提问的远程处理 |
 | 消息同步 | 加密信箱、分页游标、断网重试、持久化发送队列、有限去重 |
-| 移动界面 | 自定义会话面板、长标题省略、安全 Markdown、代码复制、轻量动画、统一波浪图标 |
+| 移动界面 | 自定义会话面板、长标题省略、安全 Markdown、代码复制、轻量动画、统一波浪图标、软键盘自适应输入栏 |
 | 连接状态 | 分别检查云端可达、电脑响应和 DSH 就绪 |
 | 用量面板 | 余额、官方峰谷时段（工作日 9:00–12:00 / 14:00–18:00 高峰，其余空闲）、Tokens、估算费用与采样时间 |
 | Windows 桌面 | WebView2 主窗口、无缝启动过渡、统一后台启停、配对入口、用量浮层 |
@@ -200,7 +200,7 @@ BackendRoot 必须是自己的 Linux 源码目录。首次运行前先完成 Lin
 bash scripts/build-apk.sh
 ```
 
-产物：`dist/DSH-Remote-v0.8.0.apk`。工具链路径通过标准环境变量或私有 `.runtime.env` 配置；依赖已全部缓存时可启用 `DSH_REMOTE_GRADLE_OFFLINE=1`。
+产物：`dist/DSH-Remote-v0.8.1.apk`。工具链路径通过标准环境变量或私有 `.runtime.env` 配置；依赖已全部缓存时可启用 `DSH_REMOTE_GRADLE_OFFLINE=1`。
 
 当前脚本生成 **debug 签名测试包**。同签名可覆盖升级；不同签名不能直接覆盖，不要为了安装而先删除旧 App 数据。APK 内置页面需要安装新版才能更新，不能只刷新网站。
 
