@@ -13,8 +13,11 @@ const bucket = v => Object.fromEntries(["hit", "miss", "out", "cost"].map(k => [
 export function sanitizeUsage(raw, now = Date.now()) {
   if (!raw || typeof raw !== "object" || raw.error || !["off", "peak"].includes(raw.nowPeriod)) throw new Error("invalid status");
   const s = raw.schedule;
-  const schedule = s?.timezone === "Asia/Shanghai" && s.utcOffsetMinutes === 480 && Number.isInteger(s.offStartMinute) && Number.isInteger(s.offEndMinute) && s.offStartMinute >= 0 && s.offEndMinute <= 1440 && s.offStartMinute < s.offEndMinute
-    ? { timezone: s.timezone, utcOffsetMinutes: s.utcOffsetMinutes, offStartMinute: s.offStartMinute, offEndMinute: s.offEndMinute } : null;
+  const schedule = s?.timezone === "Asia/Shanghai" && s.utcOffsetMinutes === 480
+    && Array.isArray(s.peakWindows) && s.peakWindows.length >= 1 && s.peakWindows.length <= 8
+    && s.peakWindows.every(w => Array.isArray(w) && w.length === 2 && Number.isInteger(w[0]) && Number.isInteger(w[1]) && w[0] >= 0 && w[1] <= 1440 && w[0] < w[1])
+    && [true, false].includes(s.weekdaysOnly)
+    ? { timezone: s.timezone, utcOffsetMinutes: s.utcOffsetMinutes, weekdaysOnly: s.weekdaysOnly === true, peakWindows: s.peakWindows.map(w => [w[0], w[1]]) } : null;
   return {
     sampledAt: Number.isFinite(raw.sampledAt) && Math.abs(raw.sampledAt - now) < 300000 ? raw.sampledAt : now,
     model: typeof raw.model === "string" && /^[a-zA-Z0-9_./:-]{1,100}$/.test(raw.model) ? raw.model : null,
@@ -23,6 +26,7 @@ export function sanitizeUsage(raw, now = Date.now()) {
     peak: bucket(raw.peak), offpeak: bucket(raw.offpeak), totalCost: nonnegative(raw.totalCost), totalTokens: nonnegative(raw.totalTokens),
     balance: amount(raw.balance), currency: code(raw.currency), costCurrency: code(raw.costCurrency) || "CNY",
     pricingDate: typeof raw.pricingDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw.pricingDate) ? raw.pricingDate : null,
+    pricingNote: typeof raw.pricingNote === "string" && raw.pricingNote.length > 0 && raw.pricingNote.length <= 160 ? raw.pricingNote : null,
   };
 }
 

@@ -49,26 +49,30 @@ PYEOF
   fi
 fi
 
-# 3) 分时段统计与计价（北京时间：空闲 00:30-08:30，高峰 08:30-00:30；空闲价为高峰价一半）
+# 3) 分时段统计与计价（官方 2026-08-17 峰谷规则：
+#    高峰 = 北京时间 周一至周五 9:00-12:00、14:00-18:00；其余（含周末全天）为空闲，空闲价为高峰价一半）
 python3 - "$TMP" "$BALANCE" "$FILE" <<'PYEOF'
 import sys, json, datetime, os, time
 
-PRICES = {  # 元 / 百万 tokens（2026-08-17 生效的官方峰谷定价）
-    'deepseek-v4-pro':   {'peak': {'hit': 0.30, 'miss': 9.0, 'out': 27.0}, 'off': {'hit': 0.15, 'miss': 4.5, 'out': 13.5}},
-    'deepseek-v4-flash': {'peak': {'hit': 0.10, 'miss': 3.0, 'out': 9.0},  'off': {'hit': 0.05, 'miss': 1.5, 'out': 4.5}},
-    'deepseek-chat':     {'peak': {'hit': 0.30, 'miss': 9.0, 'out': 27.0}, 'off': {'hit': 0.15, 'miss': 4.5, 'out': 13.5}},
-    'deepseek-reasoner': {'peak': {'hit': 0.30, 'miss': 9.0, 'out': 27.0}, 'off': {'hit': 0.15, 'miss': 4.5, 'out': 13.5}},
+PRICES = {  # 元 / 百万 tokens（官方 2026-08-17 生效的峰谷定价）
+    'deepseek-v4-pro':              {'peak': {'hit': 0.30, 'miss': 9.0, 'out': 27.0}, 'off': {'hit': 0.15, 'miss': 4.5, 'out': 13.5}},
+    'deepseek-v4-flash':            {'peak': {'hit': 0.10, 'miss': 3.0, 'out': 9.0},  'off': {'hit': 0.05, 'miss': 1.5, 'out': 4.5}},
+    'deepseek-v4-flash-vision-exp': {'peak': {'hit': 0.10, 'miss': 3.0, 'out': 9.0},  'off': {'hit': 0.05, 'miss': 1.5, 'out': 4.5}},
 }
 BJT = datetime.timedelta(hours=8)
-OFF_START, OFF_END = 30, 510
+PEAK_WINDOWS = ((540, 720), (840, 1080))  # 9:00-12:00、14:00-18:00（北京时间，分钟）
 
 def bj_time(ts_ms):
     return datetime.datetime.utcfromtimestamp(ts_ms / 1000.0) + BJT
 
-def bucket(ts_ms):
-    t = bj_time(ts_ms)
+def is_peak(t):
+    if t.weekday() >= 5:  # 周六/周日全天空闲
+        return False
     hm = t.hour * 60 + t.minute
-    return 'off' if OFF_START <= hm < OFF_END else 'peak'
+    return any(start <= hm < end for start, end in PEAK_WINDOWS)
+
+def bucket(ts_ms):
+    return 'peak' if is_peak(bj_time(ts_ms)) else 'off'
 
 model = None
 buckets = {'peak': {'hit': 0, 'miss': 0, 'out': 0, 'cost': 0.0},
@@ -96,6 +100,9 @@ with open(sys.argv[1], encoding='utf-8', errors='replace') as f:
         buckets[b]['out'] += int(u.get('outputTokens') or 0)
 
 model = model or 'deepseek-v4-pro'
+pricing_note = None
+if model not in PRICES:
+    pricing_note = '无官方现价，按 deepseek-v4-pro 估算'
 price = PRICES.get(model) or PRICES['deepseek-v4-pro']
 for b in ('peak', 'off'):
     p = price[b]
@@ -103,8 +110,7 @@ for b in ('peak', 'off'):
         (buckets[b]['hit'] * p['hit'] + buckets[b]['miss'] * p['miss'] + buckets[b]['out'] * p['out']) / 1e6, 4)
 
 now = datetime.datetime.utcnow() + BJT
-hm = now.hour * 60 + now.minute
-cur = 'off' if OFF_START <= hm < OFF_END else 'peak'
+cur = 'peak' if is_peak(now) else 'off'
 
 balance = None
 currency = 'CNY'
@@ -133,6 +139,8 @@ print(json.dumps({
     'costCurrency': 'CNY',
     'pricingDate': '2026-08-17',
     'schedule': {'timezone': 'Asia/Shanghai', 'utcOffsetMinutes': 480,
-                 'offStartMinute': OFF_START, 'offEndMinute': OFF_END},
+                 'weekdaysOnly': True,
+                 'peakWindows': [list(w) for w in PEAK_WINDOWS]},
+    'pricingNote': pricing_note,
 }, ensure_ascii=False))
 PYEOF

@@ -4,13 +4,13 @@
     android:height="108dp"
     android:viewportWidth="512"
     android:viewportHeight="512">
-    <path android:fillColor="#14171C" android:pathData="M0,0h512v512h-512z" />
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#F5F5F7"
-        android:strokeWidth="38"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M221,112Q256,77 291,112L400,221Q435,256 400,291L291,400Q256,435 221,400L112,291Q77,256 112,221Z" />
-    <path android:fillColor="#5AA9FF" android:strokeColor="#14171C" android:strokeWidth="18" android:pathData="M372,106a34,34 0,1 0,0 68a34,34 0,1 0,0 -68" />
+    <path android:fillColor="#14171C" android:pathData="M112,0 H400 A112,112 0 0 1 512,112 V400 A112,112 0 0 1 400,512 H112 A112,112 0 0 1 0,400 V112 A112,112 0 0 1 112,0 Z" />
+    <!-- 波浪辉光（柔和白光） -->
+    <path android:fillColor="#00000000" android:strokeColor="#2EFFFFFF" android:strokeWidth="48" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M112,256 C160,144 208,144 256,256 C304,368 352,368 400,256" />
+    <!-- 单一柔和白色波浪主线（先峰后谷） -->
+    <path android:fillColor="#00000000" android:strokeColor="#E8ECF2" android:strokeWidth="24" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M112,256 C160,144 208,144 256,256 C304,368 352,368 400,256" />
+    <!-- 波峰琥珀光点：光晕 / 核心 / 高光 -->
+    <path android:fillColor="#46FBBF24" android:pathData="M184,138 a34,34 0 1 0 0,68 a34,34 0 1 0 0,-68" />
+    <path android:fillColor="#FBBF24" android:pathData="M184,156 a16,16 0 1 0 0,32 a16,16 0 1 0 0,-32" />
+    <path android:fillColor="#FFE9B0" android:pathData="M184,164 a8,8 0 1 0 0,16 a8,8 0 1 0 0,-16" />
 </vector>

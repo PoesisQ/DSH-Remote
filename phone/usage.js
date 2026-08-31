@@ -30,9 +30,10 @@
       const stale = !!d && (age > 300000 || age < -300000 || this.record.status !== "ok" || this.failed);
       let period = d?.nowPeriod, range = "时段规则暂不可用";
       const s = d?.schedule;
-      if (s?.timezone === "Asia/Shanghai" && s.utcOffsetMinutes === 480 && Number.isInteger(s.offStartMinute) && Number.isInteger(s.offEndMinute) && s.offStartMinute >= 0 && s.offStartMinute < s.offEndMinute && s.offEndMinute <= 1440) {
-        if (!stale) { const time = new Date(now + s.utcOffsetMinutes * 60000), minute = time.getUTCHours() * 60 + time.getUTCMinutes(); period = minute >= s.offStartMinute && minute < s.offEndMinute ? "off" : "peak"; }
-        range = `北京时间 · 谷时 ${hhmm(s.offStartMinute)}–${hhmm(s.offEndMinute)} · 其余为峰时`;
+      if (s?.timezone === "Asia/Shanghai" && s.utcOffsetMinutes === 480 && Array.isArray(s.peakWindows) && s.peakWindows.length > 0 && s.peakWindows.every(w => Array.isArray(w) && w.length === 2) && [true, false].includes(s.weekdaysOnly)) {
+        if (!stale) { const t = new Date(now + s.utcOffsetMinutes * 60000), minute = t.getUTCHours() * 60 + t.getUTCMinutes(), weekday = t.getUTCDay() >= 1 && t.getUTCDay() <= 5; period = ((!s.weekdaysOnly || weekday) && s.peakWindows.some(([a, b]) => minute >= a && minute < b)) ? "peak" : "off"; }
+        const wins = s.peakWindows.map(([a, b]) => `${hhmm(a)}–${hhmm(b)}`).join(" / ");
+        range = `北京时间${s.weekdaysOnly ? " 工作日" : ""} · 峰时 ${wins} · 其余谷时`;
       }
       const status = busy ? "正在同步电脑用量…" : this.record?.status === "not-configured" ? "电脑端尚未配置用量脚本" : this.record?.status === "unavailable" ? "电脑用量暂不可用，可稍后刷新" : stale ? "历史快照 · 等待电脑更新" : this.failed || this.pending ? "未收到用量回复，请检查电脑连接" : !d ? "等待电脑同步用量" : d.balance === null ? "余额查询暂不可用 · 用量已同步" : "来自电脑端用量组件";
       return { d, busy, stale, status, period, range,

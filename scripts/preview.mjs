@@ -39,7 +39,7 @@ createServer(async (req, res) => {
     if (result.status === 201 && peer !== "offline") {
       const incoming = openEnvelope(pairing, JSON.parse(body).wire, "to-pc");
       if (incoming?.k === "presence") await mail("presence", { protocol: 1, dsh: peer }, incoming.id);
-      if (incoming?.k === "usage") await mail("usage", { protocol: 1, status: peer === "ready" ? "ok" : "unavailable", snapshot: { sampledAt: Date.now(), nowPeriod: "peak", balance: 53.35, currency: "CNY", costCurrency: "CNY", totalCost: 1.2467, totalTokens: 126000, peak: { cost: 1.1 }, offpeak: { cost: .1467 }, model: "deepseek-v4-pro", pricingDate: "2026-08-17", schedule: { timezone: "Asia/Shanghai", utcOffsetMinutes: 480, offStartMinute: 30, offEndMinute: 510 } } }, incoming.id);
+      if (incoming?.k === "usage") await mail("usage", { protocol: 1, status: peer === "ready" ? "ok" : "unavailable", snapshot: { sampledAt: Date.now(), nowPeriod: "peak", balance: 53.35, currency: "CNY", costCurrency: "CNY", totalCost: 1.2467, totalTokens: 126000, peak: { cost: 1.1 }, offpeak: { cost: .1467 }, model: "deepseek-v4-pro", pricingDate: "2026-08-17", schedule: { timezone: "Asia/Shanghai", utcOffsetMinutes: 480, weekdaysOnly: true, peakWindows: [[540, 720], [840, 1080]] } } }, incoming.id);
       if (incoming?.k === "hello") {
         await mail("hello", snapshot());
         await mail("chat", { role: "assistant", text: "## 项目进度\n\n已完成 **连接状态修复** 与配置隔离。\n\n- 新建对话收进列表\n- 图标使用统一圆角轮廓\n\n> 本地预览不访问真实中继。\n\n```js\nconst connected = relay && computer && dsh;\n```" });

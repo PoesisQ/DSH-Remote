@@ -5,7 +5,7 @@ import test from "node:test";
 import { sanitizeUsage, UsageReader, runStatusScript } from "../src/usage.js";
 
 const sample = (now = Date.now()) => ({ sampledAt: now, nowPeriod: "peak", model: "deepseek-v4-pro", balance: "53.35", currency: "CNY", totalCost: 1.2, totalTokens: 200,
-  schedule: { timezone: "Asia/Shanghai", utcOffsetMinutes: 480, offStartMinute: 30, offEndMinute: 510 }, peak: { cost: 1 }, offpeak: { cost: 0.2 } });
+  schedule: { timezone: "Asia/Shanghai", utcOffsetMinutes: 480, weekdaysOnly: true, peakWindows: [[540, 720], [840, 1080]] }, peak: { cost: 1 }, offpeak: { cost: 0.2 } });
 const context = vm.createContext({});
 vm.runInContext(readFileSync(new URL("../phone/usage.js", import.meta.url), "utf8"), context);
 const { UsageState } = context.DRUsage;
@@ -57,8 +57,17 @@ test("phone validates request references, keeps old snapshots labelled stale, re
   u.reset(); assert.equal(u.view().balance, "—"); assert.equal(u.accept("two", packet), false);
 });
 
-test("phone derives peak boundaries from desktop schedule in Beijing time", () => {
-  for (const [iso, expected] of [["2026-08-27T00:29:59+08:00", "peak"], ["2026-08-27T00:30:00+08:00", "off"], ["2026-08-27T08:29:59+08:00", "off"], ["2026-08-27T08:30:00+08:00", "peak"]]) {
+test("phone derives peak windows from desktop schedule in Beijing time (weekdays only)", () => {
+  for (const [iso, expected] of [
+    ["2026-08-27T08:59:59+08:00", "off"], ["2026-08-27T09:00:00+08:00", "peak"],   // 周四
+    ["2026-08-27T11:59:59+08:00", "peak"], ["2026-08-27T12:00:00+08:00", "off"],  // 午休
+    ["2026-08-27T13:59:59+08:00", "off"], ["2026-08-27T14:00:00+08:00", "peak"],
+    ["2026-08-27T17:59:59+08:00", "peak"], ["2026-08-27T18:00:00+08:00", "off"],
+    ["2026-08-27T23:59:59+08:00", "off"],
+    ["2026-08-29T10:00:00+08:00", "off"],  // 周六全天空闲
+    ["2026-08-30T15:00:00+08:00", "off"],  // 周日全天空闲
+    ["2026-08-31T09:30:00+08:00", "peak"], // 周一
+  ]) {
     const now = Date.parse(iso), u = new UsageState(() => now); u.request("r");
     u.accept("r", { protocol: 1, status: "ok", snapshot: sanitizeUsage(sample(now), now) });
     assert.equal(u.view().period, expected);

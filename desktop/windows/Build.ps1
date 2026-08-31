@@ -5,7 +5,7 @@ $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 $scratch = Join-Path ([IO.Path]::GetTempPath()) ('dsh-suite-build-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $scratch | Out-Null
-foreach ($name in @('Program.cs','Settings.cs','SettingsTests.cs','SplashTests.cs','app.manifest','make-icon.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $scratch }
+foreach ($name in @('Program.cs','Settings.cs','SettingsTests.cs','MainOverlayTests.cs','app.manifest','make-icon.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $scratch }
 $core = Join-Path $SdkPath 'Microsoft.Web.WebView2.Core.dll'
 $forms = Join-Path $SdkPath 'Microsoft.Web.WebView2.WinForms.dll'
 $loader = Join-Path $SdkPath 'WebView2Loader.dll'
@@ -30,10 +30,10 @@ try {
   & "$scratch\SettingsTests.exe"
   if ($LASTEXITCODE -ne 0) { throw 'Desktop settings tests failed' }
   foreach ($file in @($core,$forms,$loader)) { Copy-Item -LiteralPath $file -Destination $scratch }
-  & $compiler /nologo /target:exe /platform:x64 /codepage:65001 /main:DshDesktop.SplashTests /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Core.dll /r:System.Web.Extensions.dll "/r:$core" "/r:$forms" "/out:$scratch\SplashTests.exe" "$scratch\Program.cs" "$scratch\Settings.cs" "$scratch\SplashTests.cs"
-  if ($LASTEXITCODE -ne 0) { throw 'Splash test compilation failed' }
-  & "$scratch\SplashTests.exe"
-  if ($LASTEXITCODE -ne 0) { throw 'Splash layout tests failed' }
+  & $compiler /nologo /target:exe /platform:x64 /codepage:65001 /main:DshDesktop.MainOverlayTests /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Core.dll /r:System.Web.Extensions.dll "/r:$core" "/r:$forms" "/out:$scratch\MainOverlayTests.exe" "$scratch\Program.cs" "$scratch\Settings.cs" "$scratch\MainOverlayTests.cs"
+  if ($LASTEXITCODE -ne 0) { throw 'Main overlay test compilation failed' }
+  & "$scratch\MainOverlayTests.exe"
+  if ($LASTEXITCODE -ne 0) { throw 'Main overlay layout tests failed' }
   Copy-Item -LiteralPath (Join-Path $scratch 'DSHarness.exe') -Destination $OutputDirectory -Force
   Copy-Item -LiteralPath (Join-Path $scratch 'icon.png') -Destination (Join-Path $OutputDirectory 'splash-logo.png') -Force
   foreach ($file in @($core,$forms,$loader)) { Copy-Item -LiteralPath $file -Destination $OutputDirectory -Force }

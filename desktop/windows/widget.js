@@ -249,7 +249,7 @@
       pill.appendChild(makeEl('span', { fontSize: '12px', color: C.muted, letterSpacing: '.2px' }, '余额 ' + esc(d.balance)));
     }
     pill.title =
-      (per === 'off' ? '空闲时段（谷时）00:30–08:30' : '高峰时段 08:30–00:30') +
+      (per === 'off' ? '空闲（谷）时段' : '高峰时段（工作日 9:00–12:00 / 14:00–18:00）') +
       ' · 本次 ' + cost +
       (d.balance != null && d.balance !== '' ? ' · 余额 ' + esc(d.balance) : '') +
       ' —— 悬停查看详情';
@@ -281,8 +281,8 @@
 
     tip.appendChild(row('本次费用', [['本次', '12px', C.muted], [money(d.totalCost), '16px', C.bright, '500']]));
     tip.appendChild(row('当前时段', per === 'off'
-      ? [['空闲', '13px', '#8b95f8', '500'], ['00:30 – 08:30', '11.5px', C.faint]]
-      : [['高峰', '13px', '#f5b83d', '500'], ['08:30 – 00:30', '11.5px', C.faint]]));
+      ? [['空闲', '13px', '#8b95f8', '500'], ['其余时间', '11.5px', C.faint]]
+      : [['高峰', '13px', '#f5b83d', '500'], ['工作日 9:00–12:00 / 14:00–18:00', '11.5px', C.faint]]));
     tip.appendChild(row('高峰费用', [[money(p.cost || 0), '13.5px', C.primary]]));
     tip.appendChild(row('空闲费用', [[money(o.cost || 0), '13.5px', C.primary]]));
     tip.appendChild(row('账户余额', [[d.balance != null && d.balance !== '' ? (esc(d.balance) + ' ' + esc(d.currency)) : '—', '15px', C.bright, '500']]));

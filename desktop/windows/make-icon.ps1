@@ -14,12 +14,8 @@ $path.AddArc(4, 248 - $d, $d, $d, 90, 90)
 $path.CloseFigure()
 
 $rect = New-Object System.Drawing.RectangleF 4, 4, 248, 248
-$bgBrush = New-Object System.Drawing.Drawing2D.LinearGradientBrush -ArgumentList $rect, ([System.Drawing.Color]::FromArgb(255, 16, 26, 46)), ([System.Drawing.Color]::FromArgb(255, 10, 15, 27)), 90
+$bgBrush = New-Object System.Drawing.Drawing2D.LinearGradientBrush -ArgumentList $rect, ([System.Drawing.Color]::FromArgb(255, 24, 24, 28)), ([System.Drawing.Color]::FromArgb(255, 10, 10, 12)), 90
 $g.FillPath($bgBrush, $path)
-
-$edgePen = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(28, 255, 255, 255)), 2
-$edgePen.Alignment = [System.Drawing.Drawing2D.PenAlignment]::Inset
-$g.DrawPath($edgePen, $path)
 
 $pts = @()
 for ($x = 56; $x -le 200; $x += 2) {
@@ -27,19 +23,14 @@ for ($x = 56; $x -le 200; $x += 2) {
   $pts += New-Object System.Drawing.PointF ($x, $y)
 }
 
-$c1 = [System.Drawing.Color]::FromArgb(255, 96, 165, 250)
-$c2 = [System.Drawing.Color]::FromArgb(255, 139, 146, 248)
-$p1 = New-Object System.Drawing.PointF 56, 86
-$p2 = New-Object System.Drawing.PointF 200, 170
-$gp = New-Object System.Drawing.Drawing2D.LinearGradientBrush -ArgumentList $p1, $p2, $c1, $c2
-
-$glow = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(46, 96, 165, 250)), 24
+$glow = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(46, 255, 255, 255)), 24
 $glow.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
 $glow.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
 $glow.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
 $g.DrawLines($glow, $pts)
 
-$pen = New-Object System.Drawing.Pen -ArgumentList $gp, 12
+# Uniform soft-white wave (no gradient banding)
+$pen = New-Object System.Drawing.Pen ([System.Drawing.Color]::FromArgb(255, 232, 236, 242)), 12
 $pen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
 $pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
 $pen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
