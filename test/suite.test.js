@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtempSync, writeFileSync, readFileSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
@@ -14,7 +14,8 @@ import { JsonStateStore } from "../src/state.js";
 test("suite init is portable, private and never overwrites existing configuration", () => {
   const dir = mkdtempSync(join(tmpdir(), "suite-config-")), path = join(dir, "config.json");
   initializeSuite(path, { cwd: dir }); assert.equal(loadSuiteConfig(path).remoteConfig, null);
-  assert.throws(() => initializeSuite(path), /already exists/); assert.equal(statSync(path).mode & 0o777, 0o600);
+  assert.throws(() => initializeSuite(path), /already exists/);
+  if (process.platform !== "win32") assert.equal(statSync(path).mode & 0o777, 0o600);
   const config = loadSuiteConfig(path);
   for (const url of ["https://example.com", "http://127.0.0.1.evil.test", "http://user@localhost", "http://localhost/?key=secret"]) assert.throws(() => validateSuiteConfig({ ...config, dsh: { ...config.dsh, url } }));
 });
@@ -27,8 +28,8 @@ test("suite rejects PID reuse / wrong owner and isolates profile sockets", () =>
 });
 
 test("legacy bridge detection resolves the config, ignoring read-only CLI actions", () => {
-  assert.equal(legacyConfigPath(["node", "bin/dsh-remote.js"], "/workspace"), "/workspace/config.json");
-  assert.equal(legacyConfigPath(["node", "/app/bin/dsh-remote.js", "--config", "../private/config.json"], "/workspace"), "/private/config.json");
+  assert.equal(legacyConfigPath(["node", "bin/dsh-remote.js"], "/workspace"), resolve("/workspace", "config.json"));
+  assert.equal(legacyConfigPath(["node", "/app/bin/dsh-remote.js", "--config", "../private/config.json"], "/workspace"), resolve("/workspace", "../private/config.json"));
   assert.equal(legacyConfigPath(["node", "bin/dsh-remote.js", "--show-pairing"], "/workspace"), null);
   assert.equal(legacyConfigPath(["node", "bin/dsh-suite.js", "run"], "/workspace"), null);
 });

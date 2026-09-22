@@ -33,7 +33,9 @@ test("legacy MQTT config migrates without reusing the old key", () => {
   assert.equal(result.config.dshUrl, "http://127.0.0.1:9999");
   assert.equal(result.config.relay.url, "https://example.vercel.app");
   assert.equal("mqtt" in JSON.parse(readFileSync(path, "utf8")), false);
-  assert.equal(statSync(path).mode & 0o777, 0o600);
+  // Windows does not implement POSIX mode bits, so Node reports the
+  // platform's synthetic read/write mask instead of the requested 0600.
+  if (process.platform !== "win32") assert.equal(statSync(path).mode & 0o777, 0o600);
   assert.equal(loadConfig(path).needsRelay, false);
 });
 

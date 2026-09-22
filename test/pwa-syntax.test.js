@@ -23,7 +23,7 @@ test("PWA inline application script parses and contains no MQTT runtime", () => 
   assert.match(html, /x\.wire\.startsWith\(`v2\.\$\{x\.id\}\.\`\)/);
 
   const serviceWorker = readFileSync(new URL("../phone/sw.js", import.meta.url), "utf8");
-  assert.match(serviceWorker, /dsh-remote-shell-v11/);
+  assert.match(serviceWorker, /dsh-remote-shell-v12/);
   assert.match(serviceWorker, /usage\.js/);
   assert.match(serviceWorker, /viewport\.js/);
   assert.match(serviceWorker, /url\.origin !== self\.location\.origin/);

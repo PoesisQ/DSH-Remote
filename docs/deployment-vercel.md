@@ -19,6 +19,7 @@ Preview 应使用独立测试凭证和 namespace，不能默认与生产隔离�
 - 同源 PWA 自动被 API 接受；其他可信前端需加入 `DSH_ALLOWED_ORIGINS`。Android 来源为 `https://appassets.androidplatform.net`，仍必须提供正确 Bearer。
 - 默认 CSP 为 `connect-src 'self'`。若使用共享网页连接外部 relay，需单独审核并配置 CSP 与目标 CORS；默认产品是同源自部署，不允许任意站点。
 - `DSH_RELAY_NAMESPACE` 可选，空值保持已有 `dr:v2:<channel>:<direction>`。新应用使用自己的 namespace。不要给已有实例随便改 namespace，否则旧消息不会自动迁移。
+- `DSH_RELAY_APPS_JSON` 可选，用于同一部署内预先登记多个私人应用。每个 app-id 自动绑定独立 `svc-<app-id>` namespace、channel、Bearer 哈希和 CORS allowlist；原始 Bearer 与 E2E key 不进入 Vercel。完整格式与接入流程见 [多应用设计](multi-app.md)。
 - 本地 `config.json`、`state.json`、`.runtime.env` 均不得提交；不同应用使用独立配置目录。电脑状态会绑定 relay URL，拒绝拿同一状态文件跨 relay 使用。
 - 手机迁移旧本地记录时绑定首次升级的 relay；保留旧副本。切换域名不自动迁移浏览器存储。
 

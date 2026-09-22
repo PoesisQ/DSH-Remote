@@ -4,6 +4,26 @@
 
 ---
 
+## 0.9.0 · 同域多应用私人中继（2026-09-22）
+
+### Vercel relay
+
+- 保留 DSH Remote 的 `/api/push`、`/api/pull`、`/api/health` 与旧 Redis key，不要求现有设备重新配对。
+- 新增 `/api/apps/<app-id>/push|pull|health`。每个应用由服务端 `DSH_RELAY_APPS_JSON` 预注册，自动绑定独立 channel、Bearer 哈希、CORS allowlist 与 `svc-<app-id>` Redis namespace；客户端不能选择 namespace。
+- 注册表严格校验 app-id、字段白名单、凭据格式、origin、数量与总大小；缺失、未知、禁用或损坏配置全部 fail closed。Vercel 不保存原始 Bearer 或 E2E key。
+- Redis store 改为 namespace 工厂，使同一函数部署可以安全创建多个逻辑信箱，同时保持旧的 deployment namespace 行为。
+- 新增跨应用凭据、相同 channel、CORS、禁用状态、错误配置及路由兼容测试。
+
+### 文档
+
+- 重写多应用指南，加入注册表 schema、HTTP API、v2 AES-GCM/HKDF 协议、游标/重试语义、接入步骤、额度与拆项目边界。
+
+### 稳健性与发布
+
+- 发布归档验证现在会规范化 Windows tar 路径，并在未发现测试文件时直接失败；权限与路径断言同时兼容 Windows 和 POSIX，避免把平台差异误报成回归。
+
+---
+
 ## 0.8.2 · Android 键盘原生兜底（2026-08-31）
 
 ### Android App

@@ -6,6 +6,12 @@
       "maxDuration": 10
     }
   },
+  "rewrites": [
+    {
+      "source": "/api/apps/:appId/:action",
+      "destination": "/api/app?__relay_app=:appId&__relay_action=:action"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

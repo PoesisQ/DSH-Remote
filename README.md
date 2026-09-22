@@ -10,7 +10,7 @@
     <a href="docs/security.md">安全边界</a> ·
     <a href="docs/CHANGELOG.md">更新说明</a>
   </p>
-  <p><code>0.8.2 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
+  <p><code>0.9.0 · early release</code> <code>Node.js ≥ 24.5</code> <code>Windows / WSL / Android / Web</code></p>
 </div>
 
 ---
@@ -38,6 +38,7 @@
 | 远程对话 | 会话搜索、切换、新建，历史摘要、队列、模型和状态查看 |
 | 任务控制 | 普通消息、steer 干预、停止回合，审批及提问的远程处理 |
 | 消息同步 | 加密信箱、分页游标、断网重试、持久化发送队列、有限去重 |
+| 多应用中继 | 保留 DSH 旧接口；可选 `/api/apps/<app-id>/...` 私人服务路径、独立凭据/CORS/Redis namespace |
 | 移动界面 | 自定义会话面板、长标题省略、安全 Markdown、代码复制、轻量动画、统一波浪图标、软键盘自适应输入栏 |
 | 连接状态 | 分别检查云端可达、电脑响应和 DSH 就绪 |
 | 用量面板 | 余额、官方峰谷时段（工作日 9:00–12:00 / 14:00–18:00 高峰，其余空闲）、Tokens、估算费用与采样时间 |
@@ -128,6 +129,7 @@ node bin/dsh-remote.js --config ./config.json --show-vercel-env
 | `DSH_RELAY_CHANNEL` | 本机初始化输出的信道 |
 | `DSH_RELAY_AUTH_SHA256` | 本机初始化输出的 Bearer 哈希 |
 | `DSH_ALLOWED_ORIGINS` | 可信网页来源；使用 APK 时包含 Android 来源 |
+| `DSH_RELAY_APPS_JSON` | 可选；其他私人应用的服务端注册表，只含 channel、Bearer 哈希和 CORS origin |
 
 Android 来源为 `https://appassets.androidplatform.net`。不要把完整 DR2、Bearer 原文或端到端密钥写进 Vercel 环境变量。
 
@@ -248,7 +250,7 @@ npm run build
 
 ### 代理、多个应用与费用
 
-代理地址只放在私有配置中；本机 DSH 不应通过云端代理。多个网站建议使用独立 Vercel 项目、信道、凭据与命名空间；子域名只是入口，不自动隔离数据权限。
+代理地址只放在私有配置中；本机 DSH 不应通过云端代理。同一所有者的多个私人应用可以使用 `/api/apps/<app-id>/...`，每个应用拥有独立信道、凭据、CORS 与 Redis namespace；互不信任的用户或流量等级差异明显时仍应拆成独立 Vercel 项目和 Redis。
 
 默认电脑空闲每 15 秒轮询一次，连续 30 天约 172,800 次请求，尚未计入手机、消息、探测和重试。**不保证永久免费**；请按账户总量检查服务商额度与条款。详见 [多应用与成本说明](docs/multi-app.md)。
 
@@ -275,7 +277,7 @@ npm run build
 
 ```bash
 npm run build:pwa      # 同步 phone → Vercel / Android
-npm run check          # JS 语法检查 + 55 项回归测试
+npm run check          # JS 语法检查 + 回归测试
 npm run audit:public   # 检查待公开文件，不输出凭据值
 npm run export:public  # 导出候选源码，不含 Git 历史或私有配置
 node scripts/verify-release.mjs
@@ -285,7 +287,7 @@ Windows 构建额外运行来源/配置/参数测试，以及主窗口启动覆�
 
 ### 当前验证状态
 
-- 本地回归：55 项通过，已从实际源码归档解压复测。
+- 本地回归：65 项通过，已在 Linux/ext4 环境执行完整测试。
 - Windows：已验证启动、失败界面、正常关窗与重开，用量浮层和加密互联探测正常。
 - Android / NovaTab：构建通过；长时间真机、不同厂商系统与不同机器迁移仍需进一步测试。
 - 依赖审计与公开文件扫描已执行，但不代表不存在安全问题。

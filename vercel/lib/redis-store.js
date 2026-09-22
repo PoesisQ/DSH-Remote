@@ -17,28 +17,29 @@ function redis() {
   return client;
 }
 
-function key(channel, direction) {
-  return streamKey(channel, direction, process.env.DSH_RELAY_NAMESPACE ?? "");
+export function createRedisStore(namespace = "") {
+  const key = (channel, direction) => streamKey(channel, direction, namespace);
+  return Object.freeze({
+    async push(channel, direction, message) {
+      return redis().xadd(key(channel, direction), "*", message, {
+        trim: { type: "MAXLEN", comparison: "~", threshold: 2000 },
+      });
+    },
+
+    async pull(channel, direction, after, limit) {
+      const start = after === "0-0" ? "-" : `(${after}`;
+      const entries = await redis().xrange(key(channel, direction), start, "+", limit);
+      return Object.entries(entries ?? {}).map(([cursor, fields]) => ({
+        cursor,
+        id: String(fields.id ?? ""),
+        wire: String(fields.wire ?? ""),
+      }));
+    },
+
+    async ping() {
+      return redis().ping();
+    },
+  });
 }
 
-export const redisStore = {
-  async push(channel, direction, message) {
-    return redis().xadd(key(channel, direction), "*", message, {
-      trim: { type: "MAXLEN", comparison: "~", threshold: 2000 },
-    });
-  },
-
-  async pull(channel, direction, after, limit) {
-    const start = after === "0-0" ? "-" : `(${after}`;
-    const entries = await redis().xrange(key(channel, direction), start, "+", limit);
-    return Object.entries(entries ?? {}).map(([cursor, fields]) => ({
-      cursor,
-      id: String(fields.id ?? ""),
-      wire: String(fields.wire ?? ""),
-    }));
-  },
-
-  async ping() {
-    return redis().ping();
-  },
-};
+export const redisStore = createRedisStore(process.env.DSH_RELAY_NAMESPACE ?? "");
